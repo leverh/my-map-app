@@ -5,6 +5,8 @@ import { getCurrentUserId } from '../services/authService';
 import IconSelector from './IconSelector';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import styles from './MapComponent.module.css';
+
 
 // Define your icons here
 const icons = {
@@ -42,53 +44,70 @@ const MapComponent = () => {
     };
   
     const handleMapClick = (e) => {
-      const comment = prompt("Enter a comment for this location:", "");
-      const newMarker = {
-        position: e.latlng,
-        icon: icons[selectedIcon],
-        comment: comment || "No comment provided"
+        const comment = prompt("Enter a comment for this location:", "");
+        const newMarker = {
+          position: e.latlng,
+          icon: selectedIcon, // Assuming icon names are saved
+          comment: comment || "No comment provided"
+        };
+        const updatedMarkers = [...markers, newMarker];
+        setMarkers(updatedMarkers);
+      
+        // Save markers to Firebase
+        if (userId) {
+          saveUserData(userId, { markers: updatedMarkers, mapState });
+        }
       };
-      setMarkers([...markers, newMarker]);
-      // Optionally save the new markers array to Firebase
-      if (userId) {
-        saveUserData(userId, { markers: [...markers, newMarker] });
-      }
-    };
   
-    useEffect(() => {
-      if (userId) {
-        getUserData(userId).then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            if (data.mapState) {
-              setMapState(data.mapState);
+      useEffect(() => {
+        if (userId) {
+          getUserData(userId).then((snapshot) => {
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              if (data.mapState) {
+                setMapState(data.mapState);
+              }
+              if (data.markers) {
+                setMarkers(data.markers);
+              }
             }
-            if (data.markers) {
-              setMarkers(data.markers);
-            }
-          }
-        }).catch((error) => {
-          console.error(error);
-        });
-      }
-    }, [userId]);
+          }).catch((error) => {
+            console.error(error);
+          });
+        }
+      }, [userId]);
+      
   
     const handleMapChange = (event) => {
-      const newMapState = {
-        center: event.target.getCenter(),
-        zoom: event.target.getZoom(),
+        const newMapState = {
+          center: event.target.getCenter(),
+          zoom: event.target.getZoom(),
+        };
+        setMapState(newMapState);
+      
+        // Save map state to Firebase
+        if (userId) {
+          saveUserData(userId, { mapState: newMapState, markers });
+        }
       };
-      setMapState(newMapState);
-      // Optionally save the new map state to Firebase
-      if (userId) {
-        saveUserData(userId, { mapState: newMapState });
-      }
-    };
+
+      const handleRemoveMarker = (markerIndex) => {
+        const updatedMarkers = markers.filter((_, idx) => idx !== markerIndex);
+        setMarkers(updatedMarkers);
+      
+        // Update Firebase
+        if (userId) {
+          saveUserData(userId, { markers: updatedMarkers, mapState });
+        }
+      };
+      
+      
   
     return (
-      <div>
-        <IconSelector onIconSelected={handleIconSelected} />
+      <div className={styles.mapContainer}>
+        <IconSelector className={styles.iconSelector} onIconSelected={handleIconSelected} />
         <MapContainer
+          className={styles.map}
           center={mapState.center}
           zoom={mapState.zoom}
           style={{ height: '100vh', width: '100%' }}
@@ -99,14 +118,20 @@ const MapComponent = () => {
         >
           <MapEvents onMapClick={handleMapClick} />
           <TileLayer
+            className={styles.tileLayer}
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           {markers.map((marker, idx) => (
-            <Marker key={idx} position={marker.position} icon={marker.icon}>
-              <Popup>{marker.comment}</Popup>
-            </Marker>
-          ))}
+  <Marker key={idx} position={marker.position} icon={icons[marker.icon]}>
+    <Popup className={styles.markerPopup}>
+      {marker.comment}
+      <br />
+      <button className={styles.removeMarkerBtn} onClick={() => handleRemoveMarker(idx)}>Remove</button>
+    </Popup>
+  </Marker>
+))}
+
         </MapContainer>
       </div>
     );

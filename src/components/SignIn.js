@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { logIn } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
+import styles from './SignIn.module.css';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -20,22 +21,24 @@ const SignIn = () => {
  
   return (
     <div>
-      <h1>Sign In</h1>
+      <h2 className={styles.header}>Sign In</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form className='{style.form}' onSubmit={handleSubmit}>
         <input
+          className={styles.email}
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
+          className={styles.password}
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Sign In</button>
+        <button className={styles.button} type="submit">Sign In</button>
       </form>
     </div>
   );

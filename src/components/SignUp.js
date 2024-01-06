@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { signUp } from '../services/authService';
+import styles from './SignUp.module.css';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -17,23 +18,25 @@ const SignUp = () => {
   };
 
   return (
-    <div>
-      <h1>Sign Up</h1>
+    <div className={styles.container}>
+      <h2 className={styles.header}>Sign Up</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <input
+          className={styles.email}
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
+          className={styles.password}
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Sign Up</button>
+        <button className={styles.button} type="submit">Sign Up</button>
       </form>
     </div>
   );

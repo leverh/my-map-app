@@ -18,7 +18,7 @@ const SignOut = () => {
     signOutUser();
   }, [navigate]);
 
-  return null; // or some kind of loading indicator
+  return null;
 };
 
 export default SignOut;
