@@ -25,14 +25,6 @@ const icons = {
   health: L.icon({ iconUrl: '/icons/health.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
 };
 
-const MapEvents = ({ onMapClick, onMapMove, onMapZoom }) => {
-  useMapEvents({
-    click: onMapClick,
-    moveend: onMapMove,
-    zoomend: onMapZoom
-  });
-  return null;
-};
 
 const MapComponent = () => {
   const [selectedIcon, setSelectedIcon] = useState('default');
@@ -48,44 +40,33 @@ const MapComponent = () => {
 
   const handleMapClick = (e) => {
     const comment = prompt("Enter a comment for this location:", "");
-    console.log("Selected icon key:", selectedIcon); // Debugging the selected icon key
-    console.log("Selected icon object:", icons[selectedIcon]); // Debugging the selected icon object
-  
     const newMarker = {
       position: e.latlng,
-      icon: icons[selectedIcon], // Ensure this refers to a valid Leaflet icon instance
+      iconKey: selectedIcon, // Save the key of the selected icon
       comment: comment || "No comment provided"
     };
-  
-    console.log("New marker:", newMarker); // Debugging the new marker object
-  
     setMarkers([...markers, newMarker]);
   
     if (userId) {
       saveUserData(userId, { markers: [...markers, newMarker], mapState });
     }
   };
-  
-  
 
   useEffect(() => {
-    console.log("Map Ref:", mapRef.current);
     if (userId) {
-      getUserData(userId)
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            if (data.mapState) {
-              setMapState(data.mapState);
-            }
-            if (data.markers) {
-              setMarkers(data.markers);
-            }
+      getUserData(userId).then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (data.mapState) {
+            setMapState(data.mapState);
           }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+          if (data.markers) {
+            setMarkers(data.markers);
+          }
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
     }
   }, [userId]);
 
@@ -121,8 +102,25 @@ const MapComponent = () => {
         .catch(error => console.log('Error:', error));
     }
   };
-  
-  
+
+  const MapEvents = ({ onMapClick, onMapMove, onMapZoom }) => {
+    useMapEvents({
+      click: onMapClick,
+      moveend: onMapMove,
+      zoomend: onMapZoom
+    });
+    return null;
+  };
+
+  const handleRemoveMarker = (markerIndex) => {
+    const updatedMarkers = markers.filter((_, index) => index !== markerIndex);
+    setMarkers(updatedMarkers);
+
+    // Update Firebase
+    if (userId) {
+      saveUserData(userId, { markers: updatedMarkers, mapState });
+    }
+  };
 
   return (
     <div className={styles.mapContainer}>
@@ -136,28 +134,29 @@ const MapComponent = () => {
       />
       <button onClick={handleSearch} className={styles.searchButton}>Search</button>
       <MapContainer
-      className={styles.map}
-      center={mapState.center}
-      zoom={mapState.zoom}
-      style={{ height: '100vh', width: '100%' }}
-      ref={mapRef} // Ensure this is correctly set
+        className={styles.map}
+        center={mapState.center}
+        zoom={mapState.zoom}
+        style={{ height: '100vh', width: '100%' }}
+        ref={mapRef}
       >
-        <MapEvents onMapClick={handleMapClick} onMapMove={handleMapChange} onMapZoom={handleMapChange} />
+        <MapEvents 
+    onMapClick={handleMapClick} 
+    onMapMove={handleMapChange} 
+    onMapZoom={handleMapChange} 
+  />
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  />
         {markers.map((marker, idx) => (
-          <Marker key={idx} position={marker.position} icon={icons[marker.icon]}>
+          <Marker key={idx} position={marker.position} icon={icons[marker.iconKey]}>
             <Popup>
               {marker.comment}
               <br />
-              <button onClick={() => {
-                const updatedMarkers = markers.filter((_, index) => index !== idx);
-                setMarkers(updatedMarkers);
-                if (userId) {
-                  saveUserData(userId, { markers: updatedMarkers, mapState });
-                }
+              <button onClick={(e) => {
+                e.stopPropagation(); // Prevent triggering map click
+                handleRemoveMarker(idx);
               }}>Remove</button>
             </Popup>
           </Marker>
