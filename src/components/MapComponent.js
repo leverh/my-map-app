@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { saveUserData, getUserData } from '../services/databaseService';
 import { getCurrentUserId } from '../services/authService';
@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import styles from './MapComponent.module.css';
 
 
-// Define your icons here
+//  icons 
 const icons = {
   default: L.icon({ iconUrl: '/icons/default.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
   food: L.icon({ iconUrl: '/icons/food.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
@@ -25,116 +25,146 @@ const icons = {
   health: L.icon({ iconUrl: '/icons/health.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
 };
 
-// MapEvents component outside MapComponent
-const MapEvents = ({ onMapClick }) => {
-    useMapEvents({
-      click: onMapClick,
-    });
-    return null;
-  };
+const MapEvents = ({ onMapClick, onMapMove, onMapZoom }) => {
+  useMapEvents({
+    click: onMapClick,
+    moveend: onMapMove,
+    zoomend: onMapZoom
+  });
+  return null;
+};
 
 const MapComponent = () => {
-    const [selectedIcon, setSelectedIcon] = useState('default');
-    const [markers, setMarkers] = useState([]);
-    const [mapState, setMapState] = useState({ center: [51.505, -0.09], zoom: 13 });
-    const userId = getCurrentUserId();
+  const [selectedIcon, setSelectedIcon] = useState('default');
+  const [markers, setMarkers] = useState([]);
+  const [mapState, setMapState] = useState({ center: [51.505, -0.09], zoom: 13 });
+  const mapRef = useRef();
+  const [searchInput, setSearchInput] = useState('');
+  const userId = getCurrentUserId();
+
+  const handleIconSelected = (icon) => {
+    setSelectedIcon(icon);
+  };
+
+  const handleMapClick = (e) => {
+    const comment = prompt("Enter a comment for this location:", "");
+    console.log("Selected icon key:", selectedIcon); // Debugging the selected icon key
+    console.log("Selected icon object:", icons[selectedIcon]); // Debugging the selected icon object
   
-    const handleIconSelected = (icon) => {
-      setSelectedIcon(icon);
+    const newMarker = {
+      position: e.latlng,
+      icon: icons[selectedIcon], // Ensure this refers to a valid Leaflet icon instance
+      comment: comment || "No comment provided"
     };
   
-    const handleMapClick = (e) => {
-        const comment = prompt("Enter a comment for this location:", "");
-        const newMarker = {
-          position: e.latlng,
-          icon: selectedIcon, // Assuming icon names are saved
-          comment: comment || "No comment provided"
-        };
-        const updatedMarkers = [...markers, newMarker];
-        setMarkers(updatedMarkers);
-      
-        // Save markers to Firebase
-        if (userId) {
-          saveUserData(userId, { markers: updatedMarkers, mapState });
-        }
-      };
+    console.log("New marker:", newMarker); // Debugging the new marker object
   
-      useEffect(() => {
-        if (userId) {
-          getUserData(userId).then((snapshot) => {
-            if (snapshot.exists()) {
-              const data = snapshot.val();
-              if (data.mapState) {
-                setMapState(data.mapState);
-              }
-              if (data.markers) {
-                setMarkers(data.markers);
-              }
-            }
-          }).catch((error) => {
-            console.error(error);
-          });
-        }
-      }, [userId]);
-      
+    setMarkers([...markers, newMarker]);
   
-    const handleMapChange = (event) => {
-        const newMapState = {
-          center: event.target.getCenter(),
-          zoom: event.target.getZoom(),
-        };
-        setMapState(newMapState);
-      
-        // Save map state to Firebase
-        if (userId) {
-          saveUserData(userId, { mapState: newMapState, markers });
-        }
-      };
-
-      const handleRemoveMarker = (markerIndex) => {
-        const updatedMarkers = markers.filter((_, idx) => idx !== markerIndex);
-        setMarkers(updatedMarkers);
-      
-        // Update Firebase
-        if (userId) {
-          saveUserData(userId, { markers: updatedMarkers, mapState });
-        }
-      };
-      
-      
-  
-    return (
-      <div className={styles.mapContainer}>
-        <IconSelector className={styles.iconSelector} onIconSelected={handleIconSelected} />
-        <MapContainer
-          className={styles.map}
-          center={mapState.center}
-          zoom={mapState.zoom}
-          style={{ height: '100vh', width: '100%' }}
-          whenCreated={(map) => {
-            map.on('moveend', handleMapChange);
-            map.on('zoomend', handleMapChange);
-          }}
-        >
-          <MapEvents onMapClick={handleMapClick} />
-          <TileLayer
-            className={styles.tileLayer}
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {markers.map((marker, idx) => (
-  <Marker key={idx} position={marker.position} icon={icons[marker.icon]}>
-    <Popup className={styles.markerPopup}>
-      {marker.comment}
-      <br />
-      <button className={styles.removeMarkerBtn} onClick={() => handleRemoveMarker(idx)}>Remove</button>
-    </Popup>
-  </Marker>
-))}
-
-        </MapContainer>
-      </div>
-    );
+    if (userId) {
+      saveUserData(userId, { markers: [...markers, newMarker], mapState });
+    }
   };
   
-  export default MapComponent;
+  
+
+  useEffect(() => {
+    console.log("Map Ref:", mapRef.current);
+    if (userId) {
+      getUserData(userId)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            if (data.mapState) {
+              setMapState(data.mapState);
+            }
+            if (data.markers) {
+              setMarkers(data.markers);
+            }
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [userId]);
+
+  const handleMapChange = (event) => {
+    const newMapState = {
+      center: event.target.getCenter(),
+      zoom: event.target.getZoom(),
+    };
+    setMapState(newMapState);
+
+    if (userId) {
+      saveUserData(userId, { mapState: newMapState, markers });
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchInput) {
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchInput)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            const location = data[0];
+            if (mapRef.current) {
+              const mapInstance = mapRef.current;
+              mapInstance.flyTo([location.lat, location.lon], 13);
+            } else {
+              console.log('Map instance not found');
+            }
+          } else {
+            console.log('Location not found');
+          }
+        })
+        .catch(error => console.log('Error:', error));
+    }
+  };
+  
+  
+
+  return (
+    <div className={styles.mapContainer}>
+      <IconSelector className={styles.iconSelector} onIconSelected={handleIconSelected} />
+      <input
+        type="text"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        placeholder="Search for a place"
+        className={styles.searchInput}
+      />
+      <button onClick={handleSearch} className={styles.searchButton}>Search</button>
+      <MapContainer
+      className={styles.map}
+      center={mapState.center}
+      zoom={mapState.zoom}
+      style={{ height: '100vh', width: '100%' }}
+      ref={mapRef} // Ensure this is correctly set
+      >
+        <MapEvents onMapClick={handleMapClick} onMapMove={handleMapChange} onMapZoom={handleMapChange} />
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {markers.map((marker, idx) => (
+          <Marker key={idx} position={marker.position} icon={icons[marker.icon]}>
+            <Popup>
+              {marker.comment}
+              <br />
+              <button onClick={() => {
+                const updatedMarkers = markers.filter((_, index) => index !== idx);
+                setMarkers(updatedMarkers);
+                if (userId) {
+                  saveUserData(userId, { markers: updatedMarkers, mapState });
+                }
+              }}>Remove</button>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
+  );
+};
+
+export default MapComponent;
