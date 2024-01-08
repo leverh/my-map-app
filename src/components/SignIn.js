@@ -20,10 +20,11 @@ const SignIn = () => {
   };
  
   return (
-    <div>
+    <div className={styles.container}>
+      <div className={styles.formContainer}>
       <h2 className={styles.header}>Sign In</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form className='{style.form}' onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <input
           className={styles.email}
           type="email"
@@ -40,6 +41,7 @@ const SignIn = () => {
         />
         <button className={styles.button} type="submit">Sign In</button>
       </form>
+      </div>
     </div>
   );
 };
