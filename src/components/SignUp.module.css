@@ -1,0 +1,74 @@
+.container {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.25)), url(../../public/images/270461-P5ZDMD-368.jpg);
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+}
+
+.formContainer {
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.35); 
+    color: #ffffff;
+    border-radius: 8px;
+    max-width: 33rem;
+    max-height: 40rem;
+    -webkit-box-shadow: 6px 10px 26px -8px rgba(255, 255, 255, 0.1); 
+    -moz-box-shadow: 6px 10px 26px -8px rgba(255, 255, 255, 0.1);
+    box-shadow: 6px 10px 26px -8px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    backdrop-filter: blur(4px);
+}
+
+.header {
+    font-size: 2.8rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.email, .password {
+    margin-bottom: 2rem;
+    padding: .7rem 1.5rem;
+    font-size: 1.6rem;
+    border-radius: 7px;
+    border: none;
+}
+
+.button {
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    background-color: #3190f5; 
+    color: #ffffff;
+    border-radius: 9px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button:hover {
+    background-color: #006fde; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+    background-color: #0056a3;
+}
+

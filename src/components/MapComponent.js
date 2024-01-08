@@ -10,19 +10,19 @@ import styles from './MapComponent.module.css';
 
 //  icons 
 const icons = {
-  default: L.icon({ iconUrl: '/icons/default.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  food: L.icon({ iconUrl: '/icons/food.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  cinema: L.icon({ iconUrl: '/icons/cinema.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  education: L.icon({ iconUrl: '/icons/education.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  cafe: L.icon({ iconUrl: '/icons/cafe.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  hotel: L.icon({ iconUrl: '/icons/hotel.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  park: L.icon({ iconUrl: '/icons/park.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  museum: L.icon({ iconUrl: '/icons/museum.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  religion: L.icon({ iconUrl: '/icons/religion.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  shopping: L.icon({ iconUrl: '/icons/shopping.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  sport: L.icon({ iconUrl: '/icons/sport.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  transport: L.icon({ iconUrl: '/icons/transport.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
-  health: L.icon({ iconUrl: '/icons/health.svg', iconSize: [30, 30], iconAnchor: [15, 30] }),
+  default: L.icon({ iconUrl: '/icons/default.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  food: L.icon({ iconUrl: '/icons/food.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  cinema: L.icon({ iconUrl: '/icons/cinema.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  education: L.icon({ iconUrl: '/icons/education.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  cafe: L.icon({ iconUrl: '/icons/cafe.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  hotel: L.icon({ iconUrl: '/icons/hotel.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  park: L.icon({ iconUrl: '/icons/park.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  museum: L.icon({ iconUrl: '/icons/museum.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  religion: L.icon({ iconUrl: '/icons/religion.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  shopping: L.icon({ iconUrl: '/icons/shopping.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  sport: L.icon({ iconUrl: '/icons/sport.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  transport: L.icon({ iconUrl: '/icons/transport.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
+  health: L.icon({ iconUrl: '/icons/health.svg', iconSize: [50, 50], iconAnchor: [25, 50] }),
 };
 
 
@@ -124,15 +124,20 @@ const MapComponent = () => {
 
   return (
     <div className={styles.mapContainer}>
+      <div className={styles.selectorContainer}>
+      <h2 className={styles.header}>My Map</h2>
+      <div className={styles.selectors}>
       <IconSelector className={styles.iconSelector} onIconSelected={handleIconSelected} />
       <input
         type="text"
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
-        placeholder="Search for a place"
+        placeholder="Search for a location"
         className={styles.searchInput}
       />
       <button onClick={handleSearch} className={styles.searchButton}>Search</button>
+      </div>
+      </div>
       <MapContainer
         className={styles.map}
         center={mapState.center}
@@ -151,10 +156,10 @@ const MapComponent = () => {
   />
         {markers.map((marker, idx) => (
           <Marker key={idx} position={marker.position} icon={icons[marker.iconKey]}>
-            <Popup>
-              {marker.comment}
+            <Popup className={styles.popup}>
+            <div className={styles.popupText}>{marker.comment}</div>
               <br />
-              <button onClick={(e) => {
+              <button className={styles.removeButton} onClick={(e) => {
                 e.stopPropagation(); // Prevent triggering map click
                 handleRemoveMarker(idx);
               }}>Remove</button>

@@ -1,0 +1,14 @@
+.iconSelector {
+    padding: .5rem;
+    background-color: #3190f5;
+    color: #ffffff;
+    font-size: 1.6rem;
+    border: none;
+    border-radius: 9px;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.iconSelector:hover {
+    background-color: #006fde;
+}

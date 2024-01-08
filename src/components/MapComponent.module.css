@@ -1,20 +1,88 @@
 .map-container {
-    /* Container styles */
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
+
+  .header {
+    font-size: 2rem;
+    color: #545454;
+    text-align: center;
+  }
+
+  .selectorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 3rem;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .selectors {
+    display: flex;
+    
+  }
+
+  .iconSelector {
+    padding: .5rem;
+  }
+
+  .searchInput {
+    margin-left: 2rem;
+    padding: .5rem;
+    border-radius: 9px;
+    border: 1px solid #3190f5;
+    text-align: center;
+  }
+
+  .searchButton {
+    padding: .5rem 1rem;
+    background-color: #3190f5; 
+    color: #ffffff;
+    border-radius: 9px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-left: .2rem;
+    text-align: center;
+}
+
+.button:hover {
+    background-color: #006fde; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+    background-color: #0056a3;
+}
   
-  .icon-selector {
-    /* Styles for the icon selector dropdown */
+.iconSelector {
+    /* Specific styles for the map */
   }
   
   .map {
     /* Specific styles for the map */
   }
   
-  .marker-popup {
-    /* Styles for popup windows on the map */
-  }
+  .popupText {
+    font-size: 1.6rem;
+    color: #545454;
+    text-align: center;
+  } 
   
-  .remove-marker-btn {
-    /* Button styles */
-  }
+  .removeButton {
+    padding: .3rem .6rem;
+    background-color: #3190f5;
+    color: #ffffff;
+    font-size: 1.6rem;
+    border: none;
+    border-radius: 7px;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+}
   
