@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { logIn } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import styles from './SignIn.module.css';
+import Footer from './Footer';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -42,7 +43,9 @@ const SignIn = () => {
         <button className={styles.button} type="submit">Sign In</button>
       </form>
       </div>
+      <Footer className={styles.customFooterStyle} />
     </div>
+    
   );
 };
 

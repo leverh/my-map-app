@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signUp } from '../services/authService';
 import styles from './SignUp.module.css';
+import Footer from './Footer';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -40,6 +41,7 @@ const SignUp = () => {
         <button className={styles.button} type="submit">Sign Up</button>
       </form>
       </div>
+      <Footer className={styles.customFooterStyle} />
     </div>
   );
 };

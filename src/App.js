@@ -7,6 +7,8 @@ import SignIn from './components/SignIn';
 import SignOut from './components/SignOut';
 import MapComponent from './components/MapComponent';
 import WelcomePage from './components/WelcomePage';
+import ProtectedRoute from './components/ProtectedRoute';
+import NotFound from './components/NotFound';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
@@ -17,7 +19,7 @@ const Navigation = ({ isLoggedIn }) => {
     <>
       {isLoggedIn && (
         <>
-          {location.pathname !== "/map" && <Link to="/map"><button>Map</button></Link>}
+          {location.pathname !== "/map" && <Link to="/map"><button className="map-button">Map</button></Link>}
           <Link to="/signout"><button className="signout-button">Sign Out</button></Link>
         </>
       )}
@@ -42,10 +44,18 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<WelcomePage />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route 
+            path="/signup" 
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn} redirectPath="/map">
+                <SignUp />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/map" element={<MapComponent />} />
           <Route path="/signout" element={<SignOut />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

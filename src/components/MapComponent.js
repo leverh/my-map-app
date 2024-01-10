@@ -6,6 +6,7 @@ import IconSelector from './IconSelector';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from './MapComponent.module.css';
+import Footer from './Footer';
 
 
 //  icons 
@@ -29,7 +30,7 @@ const icons = {
 const MapComponent = () => {
   const [selectedIcon, setSelectedIcon] = useState('default');
   const [markers, setMarkers] = useState([]);
-  const [mapState, setMapState] = useState({ center: [51.505, -0.09], zoom: 13 });
+  const [mapState, setMapState] = useState({ center: [0, 0], zoom: 2 });
   const mapRef = useRef();
   const [searchInput, setSearchInput] = useState('');
   const userId = getCurrentUserId();
@@ -123,6 +124,7 @@ const MapComponent = () => {
   };
 
   return (
+    <div className={styles.pageBackground}>
     <div className={styles.mapContainer}>
       <div className={styles.selectorContainer}>
       <h2 className={styles.header}>My Map</h2>
@@ -167,6 +169,8 @@ const MapComponent = () => {
           </Marker>
         ))}
       </MapContainer>
+      <Footer className={styles.customFooterStyle} />
+    </div>
     </div>
   );
 };
