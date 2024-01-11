@@ -7,6 +7,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -59,5 +60,11 @@
 
 .button:active {
     background-color: #0056a3;
+}
+
+.customFooterStyle {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.7rem;
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Footer from './Footer';
 import styles from './WelcomePage.module.css';
 
 const WelcomePage = () => {
@@ -10,6 +11,7 @@ const WelcomePage = () => {
       <Link  to="/signin"><button className={styles.button}>Sign In</button></Link>
       <Link to="/signup"><button className={styles.button}>Sign Up</button></Link>
     </div>
+    <Footer className={styles.customFooterStyle} />
     </div>
   );
 };

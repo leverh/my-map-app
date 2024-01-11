@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { saveUserData, getUserData } from '../services/databaseService';
 import { getCurrentUserId } from '../services/authService';
+import LogoutButton from './LogoutButton';
 import IconSelector from './IconSelector';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -126,6 +127,7 @@ const MapComponent = () => {
   return (
     <div className={styles.pageBackground}>
     <div className={styles.mapContainer}>
+      {userId && <LogoutButton />}
       <div className={styles.selectorContainer}>
       <h2 className={styles.header}>My Map</h2>
       <div className={styles.selectors}>
@@ -169,8 +171,9 @@ const MapComponent = () => {
           </Marker>
         ))}
       </MapContainer>
+      
+      </div>
       <Footer className={styles.customFooterStyle} />
-    </div>
     </div>
   );
 };

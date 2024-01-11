@@ -17,11 +17,8 @@ const Navigation = ({ isLoggedIn }) => {
 
   return (
     <>
-      {isLoggedIn && (
-        <>
-          {location.pathname !== "/map" && <Link to="/map"><button className="map-button">Map</button></Link>}
-          <Link to="/signout"><button className="signout-button">Sign Out</button></Link>
-        </>
+      {isLoggedIn && location.pathname !== "/map" && (
+        <Link to="/map"><button className="map-button">Map</button></Link>
       )}
     </>
   );
